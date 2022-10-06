@@ -80,7 +80,7 @@ public class StargateTestResource
     String CASSANDRA_IMAGE_TAG = "4.0.4";
 
     String STARGATE_IMAGE = "stargateio/coordinator-4_0";
-    String STARGATE_IMAGE_TAG = "v2.0.0-BETA-2";
+    String STARGATE_IMAGE_TAG = "latest";
 
     String CLUSTER_NAME = "int-test-cluster";
     String CLUSTER_VERSION = "4.0";
