@@ -28,17 +28,23 @@ import javax.validation.constraints.NotNull;
 @ConfigMapping(prefix = "stargate.metrics")
 public interface MetricsConfig {
 
-  /** @return Global tags attached to each metric being recorded. */
+  /**
+   * @return Global tags attached to each metric being recorded.
+   */
   Map<String, String> globalTags();
 
-  /** @return Setup for the tenant request counting. */
+  /**
+   * @return Setup for the tenant request counting.
+   */
   @NotNull
   @Valid
   TenantRequestCounterConfig tenantRequestCounter();
 
   interface TenantRequestCounterConfig {
 
-    /** @return If tenant request counter is enabled. */
+    /**
+     * @return If tenant request counter is enabled.
+     */
     @WithDefault("${stargate.multi-tenancy.enabled}")
     boolean enabled();
 
@@ -50,12 +56,16 @@ public interface MetricsConfig {
     @WithDefault("http.server.requests.counter")
     String metricName();
 
-    /** @return The tag key for tenant-id, defaults to <code>tenant</code>. */
+    /**
+     * @return The tag key for tenant-id, defaults to <code>tenant</code>.
+     */
     @NotBlank
     @WithDefault("tenant")
     String tenantTag();
 
-    /** @return The tag key for error flag, defaults to <code>error</code>. */
+    /**
+     * @return The tag key for error flag, defaults to <code>error</code>.
+     */
     @NotBlank
     @WithDefault("error")
     String errorTag();

@@ -32,14 +32,18 @@ import javax.validation.constraints.Pattern;
 @ConfigMapping(prefix = "stargate.auth")
 public interface AuthConfig {
 
-  /** @return Header based authentication setup. */
+  /**
+   * @return Header based authentication setup.
+   */
   @Valid
   HeaderBasedAuthConfig headerBased();
 
   /** Configuration for the header based authentication. */
   interface HeaderBasedAuthConfig {
 
-    /** @return If the header based auth is enabled. */
+    /**
+     * @return If the header based auth is enabled.
+     */
     @WithDefault("true")
     boolean enabled();
 
@@ -52,7 +56,9 @@ public interface AuthConfig {
     String headerName();
   }
 
-  /** @return Configuration for the cassandra token resolver. */
+  /**
+   * @return Configuration for the cassandra token resolver.
+   */
   @Valid
   TokenResolverConfig tokenResolver();
 
@@ -79,7 +85,9 @@ public interface AuthConfig {
     @WithDefault("principal")
     Optional<@Pattern(regexp = "header|principal|fixed|custom") String> type();
 
-    /** @return Specific settings for the <code>header</code> token resolver type. */
+    /**
+     * @return Specific settings for the <code>header</code> token resolver type.
+     */
     @Valid
     AuthConfig.TokenResolverConfig.HeaderTokenResolverConfig header();
 
@@ -94,13 +102,17 @@ public interface AuthConfig {
       String headerName();
     }
 
-    /** @return Specific settings for the <code>fixed</code> token resolver type. */
+    /**
+     * @return Specific settings for the <code>fixed</code> token resolver type.
+     */
     @Valid
     AuthConfig.TokenResolverConfig.FixedTokenResolverConfig fixed();
 
     interface FixedTokenResolverConfig {
 
-      /** @return Token value. */
+      /**
+       * @return Token value.
+       */
       Optional<String> token();
     }
   }

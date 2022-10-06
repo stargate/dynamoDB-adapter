@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import javax.inject.Inject;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +31,13 @@ import org.slf4j.LoggerFactory;
 public class DynamoResourceImpl implements DynamoResourceApi {
   private static final Logger logger = LoggerFactory.getLogger(DynamoResourceImpl.class);
 
-  @Inject private StargateBridgeClient bridge;
-  @Inject private TableProxy tableProxy;
-  @Inject private ItemProxy itemProxy;
-  @Inject private QueryProxy queryProxy;
+  @Inject StargateBridgeClient bridge;
+  @Inject TableProxy tableProxy;
+  @Inject ItemProxy itemProxy;
+  @Inject QueryProxy queryProxy;
 
   @Override
-  public Response handleRequest(@HeaderParam("X-Amz-Target") String target, String payload) {
+  public Response handleRequest(HttpHeaders headers, String target, String payload) {
     target = target.split("\\.")[1];
     DynamoStatementType statementType = DynamoStatementType.valueOf(target);
     byte[] response;

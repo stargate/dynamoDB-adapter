@@ -33,6 +33,8 @@ import io.vertx.ext.web.RoutingContext;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
@@ -46,6 +48,8 @@ import org.slf4j.LoggerFactory;
  */
 public class HeaderBasedAuthenticationMechanism implements HttpAuthenticationMechanism {
 
+  private static final Pattern CREDENTIAL_PATTERN =
+      Pattern.compile("Credential=([^/]+)/[^/]+/[^/]+/dynamodb");
   private static final Logger LOG =
       LoggerFactory.getLogger(HeaderBasedAuthenticationMechanism.class);
 
@@ -64,11 +68,21 @@ public class HeaderBasedAuthenticationMechanism implements HttpAuthenticationMec
   @Override
   public Uni<SecurityIdentity> authenticate(
       RoutingContext context, IdentityProviderManager identityProviderManager) {
-    String headerValue = context.request().getHeader(headerName);
-
-    if (null != headerValue) {
-      HeaderAuthenticationRequest request =
-          new HeaderAuthenticationRequest(headerName, headerValue);
+    // TODO: extract this and put it into dynamo module
+    String token = context.request().getHeader(headerName);
+    if (token == null) {
+      String credential = context.request().getHeader("Authorization");
+      Matcher m = CREDENTIAL_PATTERN.matcher(credential);
+      if (m.find()) {
+        // retrieve Stargate token from AWS-generated authorization string
+        token = m.group(1);
+      } else {
+        // normal Stargate token
+        token = credential;
+      }
+    }
+    if (null != token) {
+      HeaderAuthenticationRequest request = new HeaderAuthenticationRequest(headerName, token);
       HttpSecurityUtils.setRoutingContextAttribute(request, context);
       return identityProviderManager.authenticate(request);
     }

@@ -80,7 +80,7 @@ public class StargateTestResource
     String CASSANDRA_IMAGE_TAG = "4.0.4";
 
     String STARGATE_IMAGE = "stargateio/coordinator-4_0";
-    String STARGATE_IMAGE_TAG = "latest";
+    String STARGATE_IMAGE_TAG = "v2.0.0-BETA-2";
 
     String CLUSTER_NAME = "int-test-cluster";
     String CLUSTER_VERSION = "4.0";
@@ -309,12 +309,16 @@ public class StargateTestResource
     return "true".equals(dse);
   }
 
-  /** @return Time to wait for the Cassandra container to start up before failing */
+  /**
+   * @return Time to wait for the Cassandra container to start up before failing
+   */
   private Duration getCassandraStartupTimeout() {
     return Duration.ofMinutes(2);
   }
 
-  /** @return Time to wait for the Coordinator container to start up before failing */
+  /**
+   * @return Time to wait for the Coordinator container to start up before failing
+   */
   private Duration getCoordinatorStartupTimeout() {
     // 13-Sep-2022, tatu: Earlier baseline of 2 minutes was somehow slightly too low for
     //    REST API on local system (Macbook): 3 minutes appears to work much more reliably

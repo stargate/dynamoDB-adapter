@@ -29,9 +29,8 @@ public class DynamoITBase {
 
   @BeforeEach
   public void setup() {
-    dynamoUrlBase = RestAssured.basePath + ":" + RestAssured.port;
-    String timestamp = "_" + System.currentTimeMillis();
-    createKeyspace("dynamodb");
+    dynamoUrlBase = RestAssured.baseURI + ":" + RestAssured.port;
+    createKeyspace();
 
     Properties props = System.getProperties();
     props.setProperty("aws.accessKeyId", IntegrationTestUtils.getAuthToken());
@@ -44,18 +43,9 @@ public class DynamoITBase {
             .build();
   }
 
-  protected void createKeyspace(String keyspaceName) {
-    // We are essentially doing this:
-    // String cql =
-    //    "CREATE KEYSPACE IF NOT EXISTS \"%s\" WITH replication = {'class': 'SimpleStrategy',
-    // 'replication_factor': 1}"
-    //        .formatted(keyspaceName);
-    //
-    // but use REST API itself to avoid having bootstrap CQL or Bridge client
-    String createKeyspace = String.format("{\"name\": \"%s\", \"replicas\": 1}", keyspaceName);
+  protected void createKeyspace() {
     givenWithAuth()
         .contentType(ContentType.JSON)
-        .body(createKeyspace)
         .when()
         .post(endpointPathForAllKeyspaces())
         .then()
@@ -81,6 +71,6 @@ public class DynamoITBase {
    */
 
   protected String endpointPathForAllKeyspaces() {
-    return "/v2/schemas/keyspaces";
+    return "/keyspace/create";
   }
 }
