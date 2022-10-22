@@ -18,7 +18,6 @@ import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.common.ResourceArg;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 import io.stargate.sgv2.common.testresource.StargateTestResource;
 import java.util.ArrayList;
@@ -33,12 +32,11 @@ import java.util.stream.StreamSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 @QuarkusIntegrationTest
-@QuarkusTestResource(
-    value = StargateTestResource.class,
-    initArgs =
-        @ResourceArg(name = StargateTestResource.Options.DISABLE_FIXED_TOKEN, value = "true"))
+@QuarkusTestResource(StargateTestResource.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DynamoApiTableIT extends DynamoITBase {
   private String tableName = "normal_table";
   private String tableName2 = "table_with_reserved_keyword";

@@ -6,7 +6,6 @@
   <version>2.0.0-BETA-3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
-    <module>sgv2-quarkus-common</module>
     <module>sgv2-dynamoapi</module>
   </modules>
   <properties>
