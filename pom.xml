@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.stargate</groupId>
   <artifactId>sgv2-api-parent</artifactId>
-  <version>2.0.0-BETA-3-SNAPSHOT</version>
+  <version>TRUNK</version>
   <packaging>pom</packaging>
   <modules>
     <module>sgv2-dynamoapi</module>
@@ -145,18 +145,6 @@
         <stargate.int-test.cluster.name>cass-${stargate.int-test.cassandra.image-tag}-cluster</stargate.int-test.cluster.name>
         <stargate.int-test.cluster.version>3.11</stargate.int-test.cluster.version>
         <stargate.int-test.cluster.dse>false</stargate.int-test.cluster.dse>
-      </properties>
-    </profile>
-    <profile>
-      <id>dse-68</id>
-      <properties>
-        <stargate.int-test.cassandra.image>datastax/dse-server</stargate.int-test.cassandra.image>
-        <stargate.int-test.cassandra.image-tag>6.8.25</stargate.int-test.cassandra.image-tag>
-        <stargate.int-test.coordinator.image>stargateio/coordinator-dse-68</stargate.int-test.coordinator.image>
-        <stargate.int-test.coordinator.image-tag>v${project.version}</stargate.int-test.coordinator.image-tag>
-        <stargate.int-test.cluster.name>dse-${stargate.int-test.cassandra.image-tag}-cluster</stargate.int-test.cluster.name>
-        <stargate.int-test.cluster.version>6.8</stargate.int-test.cluster.version>
-        <stargate.int-test.cluster.dse>true</stargate.int-test.cluster.dse>
       </properties>
     </profile>
   </profiles>

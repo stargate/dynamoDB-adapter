@@ -1,4 +1,4 @@
-name: CI IT Experiment
+name: Dynamo CI test
 
 on:
   pull_request:
@@ -57,4 +57,5 @@ jobs:
         env:
           CONTAINER_TEST: true
         run: |
-          ./mvnw -B -ntp verify -DskipUnitTests -am -P ${{ matrix.backend }}
+          mvn clean install -DskipTests=true
+          mvn verify --projects sgv2-dynamoapi -P ${{ matrix.backend }}

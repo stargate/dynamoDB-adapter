@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.stargate</groupId>
     <artifactId>sgv2-api-parent</artifactId>
-    <version>2.0.0-BETA-5-SNAPSHOT</version>
+    <version>TRUNK</version>
   </parent>
   <groupId>io.stargate.web</groupId>
   <artifactId>sgv2-dynamoapi</artifactId>
@@ -113,7 +113,7 @@
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>DynamoDBLocal</artifactId>
-      <version>1.20.0</version>
+      <version>[1.12,2.0)</version>
       <scope>test</scope>
     </dependency>
     <!-- Test dependencies, other -->
