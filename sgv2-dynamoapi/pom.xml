@@ -9,7 +9,6 @@
   <groupId>io.stargate.web</groupId>
   <artifactId>sgv2-dynamoapi</artifactId>
   <properties>
-    <stargate.version>2.0.0-BETA-5</stargate.version>
     <antlr4.version>4.9.3</antlr4.version>
     <dynamodb.sdk.version>1.12.311</dynamodb.sdk.version>
     <failsafe.useModulePath>false</failsafe.useModulePath>
@@ -190,13 +189,12 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire-plugin.version}</version>
         <configuration>
-          <argLine>-Dtesting.containers.stargate-image=${stargate.int-test.coordinator.image}:v${stargate.version} -Dsqlite4java.library.path=${basedir}/target/dependencies</argLine>
           <systemPropertyVariables>
             <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-            <maven.home>${maven.home}</maven.home>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -221,8 +219,9 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${surefire-plugin.version}</version>
+        <version>${failsafe-plugin.version}</version>
         <executions>
           <execution>
             <goals>
@@ -234,6 +233,7 @@
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                 <quarkus.log.level>INFO</quarkus.log.level>
                 <maven.home>${maven.home}</maven.home>
+                <sqlite4java.library.path>${basedir}/target/dependencies</sqlite4java.library.path>
                 <testing.containers.cassandra-image>${stargate.int-test.cassandra.image}:${stargate.int-test.cassandra.image-tag}</testing.containers.cassandra-image>
                 <testing.containers.stargate-image>${stargate.int-test.coordinator.image}:${stargate.int-test.coordinator.image-tag}</testing.containers.stargate-image>
                 <testing.containers.cluster-name>${stargate.int-test.cluster.name}</testing.containers.cluster-name>
