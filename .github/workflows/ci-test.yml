@@ -11,8 +11,8 @@ on:
       - '*.md'
 
 jobs:
-  integration-test:
-    name: Integration Test
+  test:
+    name: Test
     # CCM installation trickier on 20.04, alas; Python 2.x dep etc problematic
     runs-on: ubuntu-18.04
     strategy:
@@ -53,9 +53,9 @@ jobs:
            </servers>
           </settings>
           EOF
-      - name: Run Integration Tests
+      - name: Run Tests
         env:
           CONTAINER_TEST: true
         run: |
           mvn clean install -DskipTests=true
-          mvn verify --projects sgv2-dynamoapi -P ${{ matrix.backend }}
+          mvn verify -P ${{ matrix.backend }}
