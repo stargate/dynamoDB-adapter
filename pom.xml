@@ -17,7 +17,7 @@
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <stargate.version>2.0.0-BETA-5</stargate.version>
+    <stargate.version>2.0.0</stargate.version>
     <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
     <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
     <quarkus.platform.version>2.11.2.Final</quarkus.platform.version>
@@ -69,6 +69,16 @@
         <groupId>com.datastax.oss</groupId>
         <artifactId>java-driver-core</artifactId>
         <version>4.14.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>1.17.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>testcontainers</artifactId>
+        <version>1.17.5</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -341,9 +351,8 @@
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <!-- Please maintain default values for int-test in sync with io.stargate.sgv2.docsapi.testresource.StargateTestResource.Defaults -->
         <stargate.int-test.cassandra.image>cassandra</stargate.int-test.cassandra.image>
-        <stargate.int-test.cassandra.image-tag>4.0.4</stargate.int-test.cassandra.image-tag>
+        <stargate.int-test.cassandra.image-tag>4.1</stargate.int-test.cassandra.image-tag>
         <stargate.int-test.coordinator.image>stargateio/coordinator-4_0</stargate.int-test.coordinator.image>
         <stargate.int-test.coordinator.image-tag>v${stargate.version}</stargate.int-test.coordinator.image-tag>
         <stargate.int-test.cluster.name>cass-${stargate.int-test.cassandra.image-tag}-cluster</stargate.int-test.cluster.name>
