@@ -1,13 +1,13 @@
-# Stargate APIs
+# Cassandra DynamoDB Adapter
 
-The Maven project in this directory is the root project for Stargate APIs that run externally to the coordinator node.  
-The project (including its submodules) is an independent project in this monorepo, not connected to the root `io.stargate:stargate` project.
-
-The REST, GraphQL, and Docs API services were factored into independent services as part of the Stargate v2 effort.
+This project is a DynamoDB adapter for [Stargate](https://stargate.io/), a data API for Apache Cassandra.
+With this adapter as well as Stargate core components, you can run DynamoDB workloads against Apache Cassandra with
+almost no change to your application code. In other words, your existing application code can read and write to Apache
+Cassandra with an illusion that it is interacting with Amazon DynamoDB.
 
 ## Development guide
 
-The submodules in this project use Quarkus, the Supersonic Subatomic Java Framework.
+This project uses Quarkus, the Supersonic Subatomic Java Framework.
 If you want to learn more about Quarkus, please visit its [website](https://quarkus.io/).
 
 It's recommended that you install Quarkus CLI in order to have a better development experience.
@@ -15,11 +15,11 @@ See [CLI Tooling](https://quarkus.io/guides/cli-tooling) for more information.
 
 Note that this project uses Java 17, please ensure that you have the target JDK installed on your system.
 
-## Project Structure
+### Create a Docker image
 
-| Project                                    | Description                                                                        |
-|--------------------------------------------|------------------------------------------------------------------------------------|
-| [sgv2-quarkus-common](sgv2-quarkus-common) | The common project for all APIs, holding shared functionality, configuration, etc. |
-| [sgv2-docsapi](sgv2-docsapi)               | The Stargate Docs API provides a document store on top of Cassandra. |
-| [sgv2-graphqlapi](sgv2-graphqlapi)         | The Stargate GraphQL API provides access to Cassandra data using GraphQL queries.  |
-| [sgv2-restapi](sgv2-restapi)               | The Stargate REST API provides an HTTP interface for accessing Cassandra data.  |
+You can create a Docker image named `io.stargate/dynamoapi` using:
+```
+./mvnw clean package -Dquarkus.container-image.build=true -DskipTests=true
+```
+
+If you want to learn more about building container images, please consult [Container images](https://quarkus.io/guides/container-image).
