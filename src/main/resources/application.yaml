@@ -58,7 +58,7 @@ quarkus:
       proactive: false
       permission:
         default:
-          paths: /*
+          paths: /v2/*
           policy: authenticated
 
   # built-in micrometer properties

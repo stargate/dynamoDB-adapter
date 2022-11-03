@@ -1,5 +1,6 @@
 package io.stargate.sgv2.dynamoapi.resources;
 
+import io.stargate.sgv2.dynamoapi.constants.DynamoOpenApiConstants;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -12,13 +13,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
+import org.eclipse.microprofile.openapi.annotations.security.SecurityRequirement;
 
 /**
  * Definition of REST API DDL endpoint methods including JAX-RS and OpenAPI annotations. No
  * implementations.
  */
 @ApplicationScoped
-@Path("/")
+@Path("/v2/")
+@SecurityRequirement(name = DynamoOpenApiConstants.SecuritySchemes.TOKEN)
 @Produces(MediaType.APPLICATION_JSON)
 public interface DynamoResourceApi {
   @POST

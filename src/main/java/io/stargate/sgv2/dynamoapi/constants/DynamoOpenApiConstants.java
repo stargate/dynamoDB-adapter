@@ -18,7 +18,7 @@
 package io.stargate.sgv2.dynamoapi.constants;
 
 /** Constants for reusing the OpenAPI objects. */
-public interface RestOpenApiConstants {
+public interface DynamoOpenApiConstants {
 
   /** Name for the Open API default security scheme. */
   interface SecuritySchemes {

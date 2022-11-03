@@ -11,6 +11,7 @@ import io.vertx.ext.web.RoutingContext;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,13 +39,15 @@ public class DynamoAuthenticationMechanism extends HeaderBasedAuthenticationMech
     String token = context.request().getHeader(headerName);
     if (token == null) {
       String credential = context.request().getHeader("Authorization");
-      Matcher m = CREDENTIAL_PATTERN.matcher(credential);
-      if (m.find()) {
-        // retrieve Stargate token from AWS-generated authorization string
-        token = m.group(1);
-      } else {
-        // normal Stargate token
-        token = credential;
+      if (StringUtils.isNotEmpty(credential)) {
+        Matcher m = CREDENTIAL_PATTERN.matcher(credential);
+        if (m.find()) {
+          // retrieve Stargate token from AWS-generated authorization string
+          token = m.group(1);
+        } else {
+          // normal Stargate token
+          token = credential;
+        }
       }
     }
     if (null != token) {

@@ -29,7 +29,7 @@ public class DynamoITBase {
 
   @BeforeEach
   public void setup() {
-    dynamoUrlBase = RestAssured.baseURI + ":" + RestAssured.port;
+    dynamoUrlBase = RestAssured.baseURI + ":" + RestAssured.port + "/v2";
     createKeyspace();
 
     Properties props = System.getProperties();
@@ -71,6 +71,6 @@ public class DynamoITBase {
    */
 
   protected String endpointPathForAllKeyspaces() {
-    return "/keyspace/create";
+    return "/v2/keyspace/create";
   }
 }
