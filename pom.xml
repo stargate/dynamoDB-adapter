@@ -8,8 +8,8 @@
     <antlr4.version>4.9.3</antlr4.version>
     <dynamodb.sdk.version>1.12.311</dynamodb.sdk.version>
     <failsafe.useModulePath>false</failsafe.useModulePath>
-    <quarkus.container-image.group>stargateio</quarkus.container-image.group>
-    <quarkus.container-image.name>dynamoapi</quarkus.container-image.name>
+    <quarkus.container-image.group>liboxuanhk</quarkus.container-image.group>
+    <quarkus.container-image.name>cassandra-dynamodb-adapter</quarkus.container-image.name>
     <quarkus.container-image.tag>v${project.version}</quarkus.container-image.tag>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <maven.compiler.source>17</maven.compiler.source>

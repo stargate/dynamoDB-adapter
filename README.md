@@ -17,7 +17,7 @@ Note that this project uses Java 17, please ensure that you have the target JDK 
 
 ### Create a Docker image
 
-You can create a Docker image named `io.stargate/dynamoapi` using:
+You can create a Docker image named `liboxuanhk/cassandra-dynamodb-adapter` using:
 ```
 ./mvnw clean package -Dquarkus.container-image.build=true -DskipTests=true
 ```
