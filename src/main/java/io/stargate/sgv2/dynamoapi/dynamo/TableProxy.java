@@ -19,7 +19,9 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class TableProxy extends Proxy {
 
   private static final String TABLE_NAME = "table_name";
