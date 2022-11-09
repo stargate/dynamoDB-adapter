@@ -1,24 +1,33 @@
 package io.stargate.sgv2.dynamoapi.dynamo;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
-import com.amazonaws.services.dynamodbv2.model.GetItemResult;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.PutItemResult;
+import static com.amazonaws.services.dynamodbv2.model.ReturnValue.ALL_OLD;
+
+import com.amazonaws.services.dynamodbv2.model.*;
 import io.stargate.bridge.proto.QueryOuterClass;
 import io.stargate.bridge.proto.Schema;
 import io.stargate.sgv2.api.common.cql.builder.Predicate;
 import io.stargate.sgv2.api.common.cql.builder.QueryBuilder;
 import io.stargate.sgv2.api.common.grpc.StargateBridgeClient;
 import io.stargate.sgv2.dynamoapi.grpc.BridgeProtoTypeTranslator;
+import io.stargate.sgv2.dynamoapi.parser.ExpressionLexer;
+import io.stargate.sgv2.dynamoapi.parser.ExpressionParser;
+import io.stargate.sgv2.dynamoapi.parser.FilterExpressionVisitor;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -133,5 +142,99 @@ public class ItemProxy extends ProjectiveProxy {
     bridge.executeQuery(writeDataBuilder.build());
     // Step 4 (TODO): Write index if applicable
     return new PutItemResult();
+  }
+
+  // CQL: DELETE FROM key.table WHERE PK = <val> [AND CK = <val>] [IF <condition>]
+  public DeleteItemResult deleteItem(
+      final DeleteItemRequest deleteItemRequest, final StargateBridgeClient bridge) {
+    final String tableName = deleteItemRequest.getTableName();
+    final String conditionExpression = deleteItemRequest.getConditionExpression();
+    // get PK (and SK, if exists)
+    final Map<String, AttributeValue> keyMap = deleteItemRequest.getKey();
+    Schema.CqlTable table =
+        bridge
+            .getTable(KEYSPACE_NAME, tableName, false)
+            .orElseThrow(() -> new IllegalArgumentException("Table not found: " + tableName));
+    QueryOuterClass.ColumnSpec partitionKey = table.getPartitionKeyColumns(0);
+    List<QueryOuterClass.ColumnSpec> clusteringKeys = table.getClusteringKeyColumnsList();
+    Optional<QueryOuterClass.ColumnSpec> clusteringKey = Optional.empty();
+    if (CollectionUtils.isNotEmpty(clusteringKeys)) {
+      assert clusteringKeys.size() == 1;
+      clusteringKey = Optional.of(clusteringKeys.get(0));
+    }
+
+    // Query first
+    QueryBuilder.QueryBuilder__21 queryBuilder =
+        new QueryBuilder()
+            .select()
+            .from(KEYSPACE_NAME, tableName)
+            .where(
+                partitionKey.getName(),
+                Predicate.EQ,
+                DataMapper.fromDynamo(keyMap.get(partitionKey.getName())));
+    if (clusteringKey.isPresent()) {
+      final String clusterKeyName = clusteringKey.get().getName();
+      queryBuilder =
+          queryBuilder.where(
+              clusterKeyName, Predicate.EQ, DataMapper.fromDynamo(keyMap.get(clusterKeyName)));
+    }
+
+    QueryOuterClass.Response response = bridge.executeQuery(queryBuilder.build());
+    Collection<Map<String, AttributeValue>> resultRows =
+        collectResults(response.getResultSet(), "", new HashMap<String, String>());
+    // if no result, exit
+    if (resultRows.isEmpty()) {
+      return new DeleteItemResult();
+    }
+    // DeleteItem only affect 1 row. Multiple delete need other requests combination (query+delete /
+    // BatchWrite)
+    assert resultRows.size() == 1;
+
+    // Regard ConditionExpression as FilterExpression
+    // Construct Predicate
+    java.util.function.Predicate<Map<String, AttributeValue>> predicate;
+    if (conditionExpression.isEmpty()) {
+      predicate = item -> true;
+    } else {
+      CharStream chars = CharStreams.fromString(conditionExpression);
+      Lexer lexer = new ExpressionLexer(chars);
+      CommonTokenStream tokens = new CommonTokenStream(lexer);
+      ExpressionParser parser = new ExpressionParser(tokens);
+      FilterExpressionVisitor visitor =
+          new FilterExpressionVisitor(
+              deleteItemRequest.getExpressionAttributeNames(),
+              deleteItemRequest.getExpressionAttributeValues());
+      ParseTree tree = parser.expr();
+      predicate = item -> visitor.isMatch(tree, item);
+    }
+    List<Map<String, AttributeValue>> resultList =
+        resultRows.stream().filter(predicate).collect(Collectors.toList());
+
+    // if no result, exit
+    if (resultList.isEmpty()) {
+      return new DeleteItemResult();
+    }
+
+    QueryBuilder.QueryBuilder__43 deleteBuilder =
+        new QueryBuilder()
+            .delete()
+            .from(KEYSPACE_NAME, tableName)
+            .where(
+                partitionKey.getName(),
+                Predicate.EQ,
+                DataMapper.fromDynamo(keyMap.get(partitionKey.getName())));
+
+    if (clusteringKey.isPresent()) {
+      final String clusterKeyName = clusteringKey.get().getName();
+      deleteBuilder =
+          deleteBuilder.where(
+              clusterKeyName, Predicate.EQ, DataMapper.fromDynamo(keyMap.get(clusterKeyName)));
+    }
+    bridge.executeQuery(deleteBuilder.build());
+    final String returnValues = deleteItemRequest.getReturnValues();
+    if (returnValues.equals(ALL_OLD.toString())) {
+      return new DeleteItemResult().withAttributes(resultList.get(0));
+    }
+    return new DeleteItemResult();
   }
 }
