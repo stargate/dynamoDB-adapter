@@ -3,11 +3,7 @@ package io.stargate.sgv2.dynamoapi.resources;
 import static io.stargate.sgv2.dynamoapi.dynamo.Proxy.awsRequestMapper;
 
 import com.amazonaws.AmazonWebServiceResult;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
-import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import com.amazonaws.services.dynamodbv2.model.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.stargate.bridge.proto.QueryOuterClass;
 import io.stargate.sgv2.api.common.cql.builder.QueryBuilder;
@@ -61,6 +57,16 @@ public class DynamoResourceImpl implements DynamoResourceApi {
         case GetItem:
           GetItemRequest getItemRequest = awsRequestMapper.readValue(payload, GetItemRequest.class);
           result = itemProxy.getItem(getItemRequest, bridge);
+          break;
+        case DeleteItem:
+          DeleteItemRequest deleteItemRequest =
+              awsRequestMapper.readValue(payload, DeleteItemRequest.class);
+          result = itemProxy.deleteItem(deleteItemRequest, bridge);
+          break;
+        case ListTables:
+          ListTablesRequest listTablesRequest =
+              awsRequestMapper.readValue(payload, ListTablesRequest.class);
+          result = tableProxy.listTables(listTablesRequest, bridge);
           break;
         case Query:
           QueryRequest queryRequest = awsRequestMapper.readValue(payload, QueryRequest.class);

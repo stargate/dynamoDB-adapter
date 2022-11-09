@@ -5,6 +5,7 @@ public enum DynamoStatementType {
   GetItem,
   CreateTable,
   DeleteTable,
+  ListTables,
   DescribeTable,
   DeleteItem,
   Query;
