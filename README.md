@@ -15,7 +15,7 @@ We recommend using docker to launch the program. We provided you with a docker-c
 
 ### Step 2: Generate authentication token
 
-Then you should be able to visit [Auth API](http://localhost:8081/swagger-ui/#/auth/createToken) to generate a token with
+Then you should be able to visit [Auth API: /v1/auth/token/generate](http://localhost:8081/swagger-ui/#/auth/createToken_1) to generate a token with
 the following payload:
 
 ```json
