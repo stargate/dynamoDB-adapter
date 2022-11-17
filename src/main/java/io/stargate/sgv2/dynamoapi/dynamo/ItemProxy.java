@@ -193,7 +193,7 @@ public class ItemProxy extends ProjectiveProxy {
     // Regard ConditionExpression as FilterExpression
     // Construct Predicate
     java.util.function.Predicate<Map<String, AttributeValue>> predicate;
-    if (conditionExpression.isEmpty()) {
+    if (conditionExpression == null || conditionExpression.isEmpty()) {
       predicate = item -> true;
     } else {
       CharStream chars = CharStreams.fromString(conditionExpression);
