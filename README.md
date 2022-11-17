@@ -25,7 +25,30 @@ the following payload:
 }
 ```
 
-### Step 3: Add endpoint and auth token to DynamoDB client
+You will get a response that looks like this:
+
+```json
+{
+  "authToken": "726a2b56-88e4-4ada-91b6-e9617044ad36"
+}
+```
+
+Copy the generated token value (i.e. `726a2b56-88e4-4ada-91b6-e9617044ad36` in this example) since we will need this token to authenticate all our requests.
+
+### Step 3: Create Keyspace
+
+If you haven't done so, run the following command to create a new keyspace in Cassandra. The keyspace name is a fixed
+value, "dynamodb". You can also manually create it in Apache Cassandra.
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8082/v2/keyspace/create' \
+  -H 'accept: */*' \
+  -H 'X-Cassandra-Token: <YOUR GENERATED TOKEN>' \
+  -d ''
+```  
+
+### Step 4: Add endpoint and auth token to DynamoDB client
 
 You should set the `aws.accessKeyId` property to be your generated token, and `aws.secretKey` to any string. Below
 is an example in Java.
