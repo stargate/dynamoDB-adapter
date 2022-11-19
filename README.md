@@ -37,16 +37,10 @@ Copy the generated token value (i.e. `726a2b56-88e4-4ada-91b6-e9617044ad36` in t
 
 ### Step 3: Create Keyspace
 
-If you haven't done so, run the following command to create a new keyspace in Cassandra. The keyspace name is a fixed
-value, "dynamodb". You can also manually create it in Apache Cassandra.
+If you haven't done so, invoke [/v2/keyspace/create API](http://localhost:8082/swagger-ui/#/default/post_v2_keyspace_create) to create a keyspace.
+Note that you need to first click on `Authorize` and enter the auth token generated just now.
 
-```bash
-curl -X 'POST' \
-  'http://localhost:8082/v2/keyspace/create' \
-  -H 'accept: */*' \
-  -H 'X-Cassandra-Token: <YOUR GENERATED TOKEN>' \
-  -d ''
-```  
+The generated keyspace has a fixed name, "dynamodb". You can also manually create the keyspace in Apache Cassandra using `cqlsh`.
 
 ### Step 4: Add endpoint and auth token to DynamoDB client
 
