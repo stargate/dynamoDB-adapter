@@ -1,6 +1,7 @@
 package io.stargate.sgv2.dynamoapi.resources;
 
 import io.stargate.sgv2.dynamoapi.constants.DynamoOpenApiConstants;
+import java.io.IOException;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.HeaderParam;
@@ -30,7 +31,8 @@ public interface DynamoResourceApi {
   Response handleRequest(
       @Context HttpHeaders headers,
       @Parameter(name = "X-Amz-Target") @HeaderParam("X-Amz-Target") String target,
-      @RequestBody(required = true) String payload);
+      @RequestBody(required = true) String payload)
+      throws IOException;
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
