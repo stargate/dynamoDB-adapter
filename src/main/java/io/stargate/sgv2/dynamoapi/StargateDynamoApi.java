@@ -1,8 +1,8 @@
 package io.stargate.sgv2.dynamoapi;
 
 import io.stargate.sgv2.api.common.config.constants.HttpConstants;
-import io.stargate.sgv2.api.common.exception.model.dto.ApiError;
 import io.stargate.sgv2.dynamoapi.constants.DynamoOpenApiConstants;
+import io.stargate.sgv2.dynamoapi.exception.DynamoError;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Components;
@@ -79,7 +79,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
                             @ExampleObject(
                                 ref = DynamoOpenApiConstants.Examples.GENERAL_BAD_REQUEST),
                           },
-                          schema = @Schema(implementation = ApiError.class))),
+                          schema = @Schema(implementation = DynamoError.class))),
               @APIResponse(
                   name = DynamoOpenApiConstants.Responses.GENERAL_401,
                   responseCode = "401",
@@ -91,7 +91,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
                             @ExampleObject(
                                 ref = DynamoOpenApiConstants.Examples.GENERAL_UNAUTHORIZED),
                           },
-                          schema = @Schema(implementation = ApiError.class))),
+                          schema = @Schema(implementation = DynamoError.class))),
               @APIResponse(
                   name = DynamoOpenApiConstants.Responses.GENERAL_404,
                   responseCode = "404",
@@ -99,7 +99,7 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
                   content =
                       @Content(
                           mediaType = MediaType.APPLICATION_JSON,
-                          schema = @Schema(implementation = ApiError.class))),
+                          schema = @Schema(implementation = DynamoError.class))),
               @APIResponse(
                   name = DynamoOpenApiConstants.Responses.GENERAL_500,
                   responseCode = "500",
@@ -111,6 +111,6 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
                             @ExampleObject(
                                 ref = DynamoOpenApiConstants.Examples.GENERAL_SERVER_SIDE_ERROR),
                           },
-                          schema = @Schema(implementation = ApiError.class))),
+                          schema = @Schema(implementation = DynamoError.class))),
             }))
 public class StargateDynamoApi extends Application {}
