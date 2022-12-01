@@ -17,9 +17,14 @@ public class DynamoApiTableIT extends DynamoITBase {
   @Test
   public void testDeleteNonExistentTable() {
     DeleteTableRequest req = new DeleteTableRequest().withTableName("non-existent");
-    assertThrows(ResourceNotFoundException.class, () -> awsClient.deleteTable(req));
-    // TODO: ensure the exceptions are the same
-    assertThrows(Exception.class, () -> proxyClient.deleteTable(req));
+    assertThrows(AmazonDynamoDBException.class, () -> awsClient.deleteTable(req));
+    AmazonDynamoDBException actual =
+        assertThrows(AmazonDynamoDBException.class, () -> proxyClient.deleteTable(req));
+    // TODO: Unfortunately, unless we parse the error message from gRPC, there is no way
+    // that we can identify and correctly categorize the exception thrown by Cassandra
+    // Thus, the final exception (error code, error message) that user receives is NOT
+    // exactly the same as Amazon DynamoDB's behavior
+    assertTrue(actual.getMessage().contains("Table 'dynamodb.non-existent' doesn't exist"));
   }
 
   @Test
@@ -94,7 +99,10 @@ public class DynamoApiTableIT extends DynamoITBase {
     assertEquals(awsResult, proxyResult);
 
     // overflow
-    assertThrows(AmazonServiceException.class, () -> awsClient.listTables(999));
-    assertThrows(AmazonServiceException.class, () -> proxyClient.listTables(999));
+    AmazonServiceException awsEx =
+        assertThrows(AmazonServiceException.class, () -> awsClient.listTables(999));
+    AmazonServiceException stargateEx =
+        assertThrows(AmazonServiceException.class, () -> proxyClient.listTables(999));
+    assertException(awsEx, stargateEx);
   }
 }

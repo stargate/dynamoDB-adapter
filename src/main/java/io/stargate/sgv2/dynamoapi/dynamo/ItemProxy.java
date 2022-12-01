@@ -8,6 +8,7 @@ import io.stargate.bridge.proto.Schema;
 import io.stargate.sgv2.api.common.cql.builder.Predicate;
 import io.stargate.sgv2.api.common.cql.builder.QueryBuilder;
 import io.stargate.sgv2.api.common.grpc.StargateBridgeClient;
+import io.stargate.sgv2.dynamoapi.exception.DynamoDBException;
 import io.stargate.sgv2.dynamoapi.grpc.BridgeProtoTypeTranslator;
 import io.stargate.sgv2.dynamoapi.parser.ExpressionLexer;
 import io.stargate.sgv2.dynamoapi.parser.ExpressionParser;
@@ -47,7 +48,13 @@ public class ItemProxy extends ProjectiveProxy {
       queryBuilder =
           queryBuilder.where(entry.getKey(), Predicate.EQ, DataMapper.fromDynamo(entry.getValue()));
     }
-    QueryOuterClass.Response response = bridge.executeQuery(queryBuilder.build());
+    QueryOuterClass.Response response;
+    try {
+      response = bridge.executeQuery(queryBuilder.build());
+
+    } catch (Exception ex) {
+      throw new DynamoDBException(ex);
+    }
     Collection<Map<String, AttributeValue>> resultRows =
         collectResults(
             response.getResultSet(),
@@ -115,7 +122,11 @@ public class ItemProxy extends ProjectiveProxy {
       }
     }
     if (alterTableBuilder != null) {
-      bridge.executeQuery(alterTableBuilder.build());
+      try {
+        bridge.executeQuery(alterTableBuilder.build());
+      } catch (Exception ex) {
+        throw new DynamoDBException(ex);
+      }
     }
 
     // Step 3: Write data
@@ -139,7 +150,11 @@ public class ItemProxy extends ProjectiveProxy {
         writeDataBuilder = writeDataBuilder.value(pair.getKey(), pair.getValue());
       }
     }
-    bridge.executeQuery(writeDataBuilder.build());
+    try {
+      bridge.executeQuery(writeDataBuilder.build());
+    } catch (Exception ex) {
+      throw new DynamoDBException(ex);
+    }
     // Step 4 (TODO): Write index if applicable
     return new PutItemResult();
   }
@@ -178,8 +193,12 @@ public class ItemProxy extends ProjectiveProxy {
           queryBuilder.where(
               clusterKeyName, Predicate.EQ, DataMapper.fromDynamo(keyMap.get(clusterKeyName)));
     }
-
-    QueryOuterClass.Response response = bridge.executeQuery(queryBuilder.build());
+    QueryOuterClass.Response response;
+    try {
+      response = bridge.executeQuery(queryBuilder.build());
+    } catch (Exception ex) {
+      throw new DynamoDBException(ex);
+    }
     Collection<Map<String, AttributeValue>> resultRows =
         collectResults(response.getResultSet(), "", new HashMap<String, String>());
     // if no result, exit
@@ -230,7 +249,11 @@ public class ItemProxy extends ProjectiveProxy {
           deleteBuilder.where(
               clusterKeyName, Predicate.EQ, DataMapper.fromDynamo(keyMap.get(clusterKeyName)));
     }
-    bridge.executeQuery(deleteBuilder.build());
+    try {
+      bridge.executeQuery(deleteBuilder.build());
+    } catch (Exception ex) {
+      throw new DynamoDBException(ex);
+    }
     final String returnValues = deleteItemRequest.getReturnValues();
     if (returnValues.equals(ALL_OLD.toString())) {
       return new DeleteItemResult().withAttributes(resultList.get(0));

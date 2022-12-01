@@ -8,6 +8,7 @@ import io.stargate.bridge.proto.Schema;
 import io.stargate.sgv2.api.common.cql.builder.Predicate;
 import io.stargate.sgv2.api.common.cql.builder.QueryBuilder;
 import io.stargate.sgv2.api.common.grpc.StargateBridgeClient;
+import io.stargate.sgv2.dynamoapi.exception.DynamoDBException;
 import io.stargate.sgv2.dynamoapi.parser.ExpressionLexer;
 import io.stargate.sgv2.dynamoapi.parser.ExpressionParser;
 import io.stargate.sgv2.dynamoapi.parser.FilterExpressionVisitor;
@@ -112,8 +113,12 @@ public class QueryProxy extends ProjectiveProxy {
 
     java.util.function.Predicate<Map<String, AttributeValue>> pred =
         getFilterPredicate(queryRequest);
-
-    QueryOuterClass.Response response = bridge.executeQuery(query);
+    QueryOuterClass.Response response;
+    try {
+      response = bridge.executeQuery(query);
+    } catch (Exception ex) {
+      throw new DynamoDBException(ex);
+    }
     Collection<Map<String, AttributeValue>> resultRows =
         collectResults(
             response.getResultSet(),
