@@ -1,7 +1,10 @@
 package io.stargate.sgv2.it;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
@@ -62,6 +65,13 @@ public class DynamoITBase {
 
   protected RequestSpecification givenWithAuthToken(String authTokenValue) {
     return given().header(HttpConstants.AUTHENTICATION_TOKEN_HEADER_NAME, authTokenValue);
+  }
+
+  protected void assertException(AmazonServiceException expected, AmazonServiceException actual) {
+    assertEquals(expected.getErrorCode(), actual.getErrorCode());
+    assertEquals(expected.getErrorType(), actual.getErrorType());
+    // Our system also records a unique identifier of the exception, which amazon does not
+    assertTrue(expected.getMessage().contains(actual.getMessage()));
   }
 
   /*

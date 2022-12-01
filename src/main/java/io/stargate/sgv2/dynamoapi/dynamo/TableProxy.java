@@ -3,7 +3,6 @@ package io.stargate.sgv2.dynamoapi.dynamo;
 import static com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel.DynamoDBAttributeType.valueOf;
 import static java.lang.Integer.min;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperFieldModel;
 import com.amazonaws.services.dynamodbv2.model.*;
 import io.stargate.bridge.proto.QueryOuterClass;
@@ -12,14 +11,15 @@ import io.stargate.sgv2.api.common.cql.builder.ImmutableColumn;
 import io.stargate.sgv2.api.common.cql.builder.Predicate;
 import io.stargate.sgv2.api.common.cql.builder.QueryBuilder;
 import io.stargate.sgv2.api.common.grpc.StargateBridgeClient;
+import io.stargate.sgv2.dynamoapi.exception.DynamoDBException;
 import io.stargate.sgv2.dynamoapi.models.PrimaryKey;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
+import javax.validation.ValidationException;
 
 @ApplicationScoped
 public class TableProxy extends Proxy {
@@ -30,7 +30,7 @@ public class TableProxy extends Proxy {
   private static final String KEYSPACE_NAME_COLUMN = "keyspace_name";
 
   public CreateTableResult createTable(
-      CreateTableRequest createTableRequest, StargateBridgeClient bridge) throws IOException {
+      CreateTableRequest createTableRequest, StargateBridgeClient bridge) {
     final String tableName = createTableRequest.getTableName();
     List<Column> columns = new ArrayList<>();
     final PrimaryKey primaryKey = getPrimaryKey(createTableRequest.getKeySchema());
@@ -50,8 +50,11 @@ public class TableProxy extends Proxy {
 
     QueryOuterClass.Query query =
         new QueryBuilder().create().table(KEYSPACE_NAME, tableName).column(columns).build();
-
-    bridge.executeQuery(query);
+    try {
+      bridge.executeQuery(query);
+    } catch (Exception ex) {
+      throw new DynamoDBException(ex);
+    }
 
     TableDescription newTableDesc =
         this.getTableDescription(
@@ -62,12 +65,15 @@ public class TableProxy extends Proxy {
   }
 
   public DeleteTableResult deleteTable(
-      DeleteTableRequest deleteTableRequest, StargateBridgeClient bridge) throws IOException {
+      DeleteTableRequest deleteTableRequest, StargateBridgeClient bridge) {
     final String tableName = deleteTableRequest.getTableName();
     QueryOuterClass.Query query = new QueryBuilder().drop().table(KEYSPACE_NAME, tableName).build();
 
-    bridge.executeQuery(query);
-    // TODO: throws appropriate exception when it fails
+    try {
+      bridge.executeQuery(query);
+    } catch (Exception ex) {
+      throw new DynamoDBException(ex);
+    }
 
     TableDescription tableDesc =
         new TableDescription()
@@ -78,8 +84,7 @@ public class TableProxy extends Proxy {
   }
 
   public ListTablesResult listTables(
-      ListTablesRequest listTablesRequest, StargateBridgeClient bridge)
-      throws IOException, AmazonServiceException {
+      ListTablesRequest listTablesRequest, StargateBridgeClient bridge) {
     final String startTableName = listTablesRequest.getExclusiveStartTableName();
     Integer limit = listTablesRequest.getLimit();
     // Range of limit: 1~100
@@ -89,7 +94,7 @@ public class TableProxy extends Proxy {
       limit = 100;
     }
     if (limit > 100) {
-      throw new AmazonServiceException("Limit should be <= 100");
+      throw new ValidationException("Limit in ListTables must be <= 100");
     }
     QueryBuilder.QueryBuilder__21 queryBuilder =
         new QueryBuilder()
@@ -100,7 +105,12 @@ public class TableProxy extends Proxy {
                 KEYSPACE_NAME_COLUMN,
                 Predicate.EQ,
                 DataMapper.fromDynamo(DataMapper.toDynamo(KEYSPACE_NAME)));
-    QueryOuterClass.Response response = bridge.executeQuery(queryBuilder.build());
+    QueryOuterClass.Response response;
+    try {
+      response = bridge.executeQuery(queryBuilder.build());
+    } catch (Exception ex) {
+      throw new DynamoDBException(ex);
+    }
     List<String> allTableNames =
         response.getResultSet().getRowsList().stream()
             .map(row -> row.getValues(0))

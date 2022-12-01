@@ -12,12 +12,13 @@ import io.stargate.sgv2.dynamoapi.dynamo.ItemProxy;
 import io.stargate.sgv2.dynamoapi.dynamo.Proxy;
 import io.stargate.sgv2.dynamoapi.dynamo.QueryProxy;
 import io.stargate.sgv2.dynamoapi.dynamo.TableProxy;
+import io.stargate.sgv2.dynamoapi.exception.DynamoDBException;
 import io.stargate.sgv2.dynamoapi.models.DynamoStatementType;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import javax.inject.Inject;
-import javax.ws.rs.WebApplicationException;
+import javax.validation.ValidationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
@@ -72,8 +73,7 @@ public class DynamoResourceImpl implements DynamoResourceApi {
         result = queryProxy.query(queryRequest, bridge);
         break;
       default:
-        throw new WebApplicationException(
-            "Invalid statement type: " + target, Response.Status.BAD_REQUEST);
+        throw new ValidationException("Invalid statement type: " + target);
     }
     response = awsRequestMapper.writeValueAsBytes(result);
     return Response.status(Response.Status.OK).entity(response).build();
@@ -88,8 +88,11 @@ public class DynamoResourceImpl implements DynamoResourceApi {
             .ifNotExists()
             .withReplication(Replication.simpleStrategy(1))
             .build();
-
-    bridge.executeQuery(query);
+    try {
+      bridge.executeQuery(query);
+    } catch (Exception ex) {
+      throw new DynamoDBException(ex);
+    }
     final Map<String, Object> responsePayload =
         Collections.singletonMap("name", Proxy.KEYSPACE_NAME);
     return Response.status(Response.Status.CREATED).entity(responsePayload).build();
