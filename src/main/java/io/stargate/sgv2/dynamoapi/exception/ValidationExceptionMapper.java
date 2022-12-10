@@ -19,7 +19,7 @@ public class ValidationExceptionMapper {
     logger.error("DynamoDB exception, errorId[{}]", errorId, e);
     DynamoError error =
         new DynamoError(
-            DynamoDBException.class.getName(),
+            ValidationException.class.getName(),
             String.format("ErrorId[%s], exception message: %s", errorId, e.getMessage()));
 
     return RestResponse.ResponseBuilder.create(Response.Status.BAD_REQUEST, error)
