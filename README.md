@@ -25,6 +25,19 @@ the following payload:
 }
 ```
 
+Alternatively, you can run the following command in your terminal:
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8081/v1/auth/token/generate' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "key": "cassandra",
+  "secret": "cassandra"
+}'
+```
+
 You will get a response that looks like this:
 
 ```json
@@ -38,9 +51,18 @@ Copy the generated token value (i.e. `726a2b56-88e4-4ada-91b6-e9617044ad36` in t
 ### Step 3: Create Keyspace
 
 If you haven't done so, invoke [/v2/keyspace/create API](http://localhost:8082/swagger-ui/#/default/post_v2_keyspace_create) to create a keyspace.
-Note that you need to first click on `Authorize` and enter the auth token generated just now.
+Note that you need to first click on `Authorize` and enter the auth token generated just now. The generated keyspace has a fixed name, "dynamodb".
 
-The generated keyspace has a fixed name, "dynamodb". You can also manually create the keyspace in Apache Cassandra using `cqlsh`.
+Alternatively, you can also run the following command in your terminal:
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8082/v2/keyspace/create' \
+  -H 'accept: */*' \
+  -H 'X-Cassandra-Token: <YOUR GENERATED TOKEN>' \
+  -H 'content-type: application/json;charset=UTF-8 ' \ 
+  -d ''
+```
 
 ### Step 4: Add endpoint and auth token to DynamoDB client
 
@@ -80,7 +102,7 @@ See [CLI Tooling](https://quarkus.io/guides/cli-tooling) for more information.
 
 Note that this project uses Java 17, please ensure that you have the target JDK installed on your system.
 
-### Create a Docker image
+### Create a Docker image manually
 
 You can create a Docker image named `liboxuanhk/cassandra-dynamodb-adapter` using:
 ```
@@ -88,3 +110,17 @@ You can create a Docker image named `liboxuanhk/cassandra-dynamodb-adapter` usin
 ```
 
 If you want to learn more about building container images, please consult [Container images](https://quarkus.io/guides/container-image).
+
+### Release process
+
+The release process is automated. Whenver a commit is tagged
+with `v1.x.y`, a release will be triggered on GitHub Actions. Specifically,
+a release workflow includes the following steps:
+
+1. Tag the commit to be released. This is the only
+   step done by the developer.
+2. Build a container image.
+3. Publish the container image to Docker Hub.
+4. Create a GitHub release.
+5. Create a Pull Request to bump the project version
+   in maven.
