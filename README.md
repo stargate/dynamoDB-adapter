@@ -82,15 +82,7 @@ public AmazonDynamoDB getClient() {
 
 ### Optional: Use DynamoDB low-level API
 
-You can also use DynamoDB low-level API. You can use [Swagger UI](http://localhost:8082/swagger-ui/) for experiments.
-To use Swagger, open your browser's developer tool and add the following key-value pair to your Cookies:
-
-```
-name=sg-swagger-token
-value=<YOUR GENERATED TOKEN>
-```
-
-to authenticate your requests.
+You can also use DynamoDB low-level HTTP API. You can use [Swagger UI](http://localhost:8082/swagger-ui/) for experiments.
 
 ## Development guide
 
