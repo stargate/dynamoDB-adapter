@@ -3,7 +3,7 @@
 # Default to INFO as root log level
 LOGLEVEL=INFO
 SGTAG=v2
-PROJTAG=v1
+PROJTAG=v1.0.0
 
 while getopts "lqr:t:" opt; do
   case $opt in
