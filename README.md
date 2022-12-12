@@ -7,7 +7,8 @@ Cassandra with an illusion that it is interacting with Amazon DynamoDB.
 
 ## User guide
 
-The following steps assumes you are running everything locally.
+The following steps assumes you are running everything locally. See [cassandra-dynamoDB-adapter-example](https://github.com/li-boxuan/cassandra-dynamoDB-adapter-example)
+for an example project and a demo video.
 
 ### Step 1: Launch Cassandra + Stargate coordinator + DynamoDB adapter
 
