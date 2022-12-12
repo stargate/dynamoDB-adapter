@@ -60,8 +60,7 @@ curl -X 'POST' \
   'http://localhost:8082/v2/keyspace/create' \
   -H 'accept: */*' \
   -H 'X-Cassandra-Token: <YOUR GENERATED TOKEN>' \
-  -H 'content-type: application/json;charset=UTF-8 ' \ 
-  -d ''
+  -H 'content-type: application/json;charset=UTF-8 '
 ```
 
 ### Step 4: Add endpoint and auth token to DynamoDB client
