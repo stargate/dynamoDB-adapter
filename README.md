@@ -1,6 +1,6 @@
 # Cassandra DynamoDB Adapter
 
-This project is a DynamoDB adapter for [Stargate](https://stargate.io/), a data API for Apache Cassandra.
+This project is a DynamoDB adapter for [Stargate](https://stargate.io/), a data API gateway for Apache Cassandra.
 With this adapter as well as Stargate core components, you can run DynamoDB workloads against Apache Cassandra with
 almost no change to your application code. In other words, your existing application code can read and write to Apache
 Cassandra with an illusion that it is interacting with Amazon DynamoDB.
