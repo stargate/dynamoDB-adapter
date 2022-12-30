@@ -5,9 +5,18 @@ With this adapter as well as Stargate core components, you can run DynamoDB work
 almost no change to your application code. In other words, your existing application code can read and write to Apache
 Cassandra with an illusion that it is interacting with Amazon DynamoDB.
 
+---
+**:warning: NOTE**
+
+This repository was originally created by students in the Master of Computational Data Science (MCDS) program at Carnegie Mellon University (CMU) as a [capstone project](https://mcds-cmu.github.io/11632/f22/). The repository has been donated to the Stargate project as an example of an API Service created according to the [Stargate v2 architecture](https://stargate.io/2022/10/26/stargate-v2-ga.html). 
+
+It is not a full implementation of the Dynamo DB API and is not considered production ready, or officially supported by the Stargate project at this time.
+
+---
+
 ## User guide
 
-The following steps assumes you are running everything locally. See [cassandra-dynamoDB-adapter-example](https://github.com/li-boxuan/cassandra-dynamoDB-adapter-example)
+The following steps assumes you are running everything locally. See [dynamoDB-adapter-example](https://github.com/stargate/dynamoDB-adapter-example)
 for an example project and a demo video.
 
 ### Step 1: Launch Cassandra + Stargate coordinator + DynamoDB adapter
